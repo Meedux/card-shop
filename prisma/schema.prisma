@@ -1,0 +1,35 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model reviews {
+  rating    Int     @db.SmallInt
+  comment   String?
+  photo_url String?
+  user_id   String? @db.Uuid
+  id        String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  store_id  String? @db.Uuid
+  stores    stores? @relation(fields: [store_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model stores {
+  created_at     DateTime                  @default(now()) @db.Timestamptz(6)
+  name           String?
+  address        String?
+  business_hours String?
+  location       Unsupported("geography")?
+  tags           String[]
+  languages      String[]
+  id             String                    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  area           String?
+  reviews        reviews[]
+}
